@@ -1,7 +1,7 @@
 import pygame
 import time
 import math
-from pymycobot import MyCobot320
+from pymycobot import MyCobot280
 from threading import Thread
 from enum import Enum
 import typing as T
@@ -15,6 +15,7 @@ if "linux" in platform.platform().lower():
     # 引脚20/21分别控制电磁阀和泄气阀门
     GPIO.setup(20, GPIO.OUT)
     GPIO.setup(21, GPIO.OUT)
+
 
 class JoyStickKey(Enum):
     StartKey = 7
@@ -42,6 +43,7 @@ class JoyStickContinous(Enum):
     RightXAxis = 3
     RightYAxis = 4
     R2 = 5
+
 
 joystick_key_map = {
     0: JoyStickKey.RBottomKey,
@@ -71,21 +73,25 @@ joystick_continous_map = {
     5: JoyStickContinous.R2,
 }
 
-mc = MyCobot320("/dev/ttyAMA0", 115200)
+mc = MyCobot280("/dev/ttyAMA0", 115200)
 mc.set_fresh_mode(1)
+
 
 # Turn on the integrated pump
 def Integrated_pump_on():
-    mc.set_digital_output(33,0)
+    mc.set_digital_output(33, 0)
+
 
 # Turn off the integrated pump
 def Integrated_pump_off():
-    mc.set_digital_output(33,1)
+    mc.set_digital_output(33, 1)
+
 
 # 开启吸泵
 def pump_on():
     # 打开电磁阀
     GPIO.output(20, 0)
+
 
 # 停止吸泵
 def pump_off():
@@ -97,6 +103,7 @@ def pump_off():
     time.sleep(1)
     GPIO.output(21, 1)
     time.sleep(0.05)
+
 
 context = {"running": True}
 arm_speed = 50
@@ -120,6 +127,7 @@ global_states = {
     },
 }
 
+
 def get_init_key_hold_timestamp():
     return {
         JoyStickKey.L1: -1,
@@ -128,7 +136,9 @@ def get_init_key_hold_timestamp():
         JoyStickContinous.R2: -1,
     }
 
+
 key_hold_timestamp = get_init_key_hold_timestamp()
+
 
 def get_joystick():
     pygame.init()
@@ -233,12 +243,12 @@ def dispatch_key_action(key: T.Union[JoyStickKey, JoyStickContinous], value: flo
 
     # 工具
     if key == JoyStickKey.RLeftKey:
-        pump_on()   #V2.0 pump
-        Integrated_pump_on()    #Integrated pump
+        pump_on()  # V2.0 pump
+        Integrated_pump_on()  # Integrated pump
         time.sleep(0.05)
     elif key == JoyStickKey.RTopKey:
-        pump_off()   #V2.0 pump
-        Integrated_pump_off()    #Integrated pump
+        pump_off()  # V2.0 pump
+        Integrated_pump_off()  # Integrated pump
         time.sleep(0.05)
     elif key == JoyStickKey.RBottomKey:
         global_states["gripper_val"] = min(100, global_states["gripper_val"] + 5)
