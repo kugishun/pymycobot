@@ -1,7 +1,7 @@
 import pygame
 import time
 import math
-from pymycobot import MyCobot280
+from pymycobot import MyCobot320
 from threading import Thread
 from enum import Enum
 import typing as T
@@ -71,7 +71,7 @@ joystick_continous_map = {
     5: JoyStickContinous.R2,
 }
 
-mc = MyCobot280("/dev/ttyAMA0", "1000000")
+mc = MyCobot320("/dev/ttyAMA0", 115200)
 mc.set_fresh_mode(1)
 
 # Turn on the integrated pump
